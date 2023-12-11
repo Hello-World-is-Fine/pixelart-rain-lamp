@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pixel Art with Changing Glow Size Effect</title>
+  <style>
+    canvas {
+      border: 1px solid #000;
+	  background-image: url("path/to/image.jpg");
+    }
+  </style>
+</head>
+<body>
+  <h1>Pixel Art with Changing Glow Size Effect</h1>
+
+  <canvas id="canvas" width="400" height="400"></canvas>
+
+  <script type="text/javascript">
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const dropSize = 3; // Size of each raindrop
+    const dropSpeed = 3; // Speed at which raindrops fall
+    const numDrops = 100; // Number of raindrops
+
+    const drops = []; // Array to store raindrop positions
+
+    // Initialize raindrop positions
+    for (let i = 0; i < numDrops; i++) {
+      drops.push({
+        x: Math.random() * canvas.width, // Random X position
+        y: Math.random() * canvas.height, // Random Y position
+      });
+    }
+
+    let glowSize = 6; // Initial diameter of the radial glow
+    let increasingSize = true; // Flag to control size direction
+    const glowSpeed = 0.2; // Speed at which glowSize increases
+
+    // Function to draw raindrops and changing glow size effect
+    function drawRaindrops() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+      ctx.fillStyle = 'blue'; // Set raindrop color
+
+      // Draw each raindrop
+      for (let i = 0; i < drops.length; i++) {
+        const drop = drops[i];
+
+        ctx.fillRect(drop.x, drop.y, dropSize, dropSize+10); // Draw raindrop
+
+        drop.y += dropSpeed; // Update raindrop position
+
+        // Reset raindrop position if it goes below canvas
+        if (drop.y > canvas.height) {
+          drop.y = 0;
+          drop.x = Math.random() * canvas.width;
+        }
+      }
+
+      const glowX = canvas.width / 2; // X coordinate of the glow center
+      const glowY = canvas.height / 2; // Y coordinate of the glow center
+
+      // Create radial gradient for the changing glow size effect
+      const gradient = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, glowSize);
+      gradient.addColorStop(0, 'rgba(255, 255, 0, 1)'); // Yellow color at the center
+      gradient.addColorStop(1, 'rgba(255, 255, 0, 0)'); // Transparent color at the edges
+
+      // Draw the changing glow size effect
+      ctx.fillStyle = gradient;
+      ctx.fillRect(glowX - glowSize, glowY - glowSize, glowSize * 2, glowSize * 2);
+
+      // Adjust glow size
+      if (increasingSize) {
+        glowSize += glowSpeed; // Increase glow size
+        if (glowSize >= 12) {
+          increasingSize = false; // Start decreasing glow size
+        }
+      } else {
+        glowSize -= glowSpeed; // Decrease glow size
+        if (glowSize <= 6) {
+          increasingSize = true; // Start increasing glow size
+        }
+      }
+
+      requestAnimationFrame(drawRaindrops); // Loop animation
+    }
+
+    drawRaindrops(); // Start the animation
+  </script>
+</body>
+</html>
